@@ -60,3 +60,22 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
+
+/*
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+
+    int *ptr;
+    for(int i = 0; i < atoi(argv[1]) * (130000 / 4); i++) {
+
+        ptr = malloc(1);
+    }
+    while(1) {
+
+    }
+
+    return 0;
+}
+*/
