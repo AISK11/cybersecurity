@@ -17,21 +17,25 @@ int isNumber(char number[]) {
 	return 1;
 }
 
-void memLeak(int megabytes) {
+void memLeak(int megabytes, char *program_name) {
 	int *ptr;
-	int assigned_bytes = 1000000; /* 1MB */
+    
+    printf("Filling memory with value close to %dMB...\n", megabytes);
+    /* weird math to fill memory at least somewhat accurate */	
+    for(int i = 0; i < (megabytes * 130000 / 4); i++) {
+        ptr = malloc(1);
+    }
 
-	for (unsigned int i = 0; i < megabytes; i++) {
-		ptr = malloc(assigned_bytes);
-		printf("%d: %d bytes were assigned.\n", i+1, assigned_bytes);
-	}
-
-
-    printf("Filled memory with %dMB.\n\nPress Ctrl+C to exit program and free the memory.\n", megabytes);	
+    /* execute GNU/Linux command to see how much memory does the process holds */
+    char mem[1000];   
+    snprintf(mem, sizeof(mem), "echo -n \"Filled memory with: \" && ps -eo rss,pid,euser,args --sort %%mem | grep -i %s | grep -v grep | awk '{printf $1/1024 \"MB\"; $1=\"\"; print }' | cut -d ' ' -f 1", program_name);
+    system(mem);
+ 
+    /* loop to keep program running, so memory won't get free */
+    printf("\nPress Ctrl+C to exit program and free the memory.\n");
 	while(1) {
-		//printf("a\n");
-	}
-
+	
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -54,28 +58,9 @@ int main(int argc, char *argv[]) {
             return -3;
 		}
         else {
-            memLeak(atoi(argv[1])); /* convert string to int */
+            memLeak(atoi(argv[1]), argv[0]); /* convert string to int */
         }
 	}
 
 	return 0;
 }
-
-/*
-#include <stdio.h>
-#include <stdlib.h>
-
-int main(int argc, char *argv[]) {
-
-    int *ptr;
-    for(int i = 0; i < atoi(argv[1]) * (130000 / 4); i++) {
-
-        ptr = malloc(1);
-    }
-    while(1) {
-
-    }
-
-    return 0;
-}
-*/
