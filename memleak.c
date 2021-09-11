@@ -8,7 +8,6 @@
 
 /* return 1, if variable is number, return 0 otherwise */
 int isNumber(char *number) {
-	
 	for (unsigned short i = 0; number[i] != 0; i++) {
 		if(number[i] > '9' || number[i] < '0') {
 			return 0;
@@ -19,9 +18,9 @@ int isNumber(char *number) {
 
 /* fill memory with specified amount of megabytes */
 void memLeak(int megabytes, char *program_name) {
+	printf("Filling memory with value close to %dMB...\n", megabytes);
+
 	int *ptr;
-    
-    printf("Filling memory with value close to %dMB...\n", megabytes);
     /* weird math to fill memory at least somewhat accurate */	
     for(int i = 0; i < (megabytes * 130000 / 4); i++) {
         ptr = malloc(1);
@@ -32,15 +31,14 @@ void memLeak(int megabytes, char *program_name) {
     snprintf(mem, sizeof(mem), "echo -n \"Filled memory with: \" && ps -eo rss,pid,euser,args --sort %%mem | grep -i %s | grep -v grep | awk '{printf $1/1024 \"MB\"; $1=\"\"; print }' | cut -d ' ' -f 1", program_name);
     system(mem);
  
-    /* loop to keep program running, so memory won't get free */
     printf("\nPress Ctrl+C to exit program and free the memory.\n");
 	while(1) {
-		/* VOID */
+		/* loop to keep program running, so memory won't get free */
     }
 }
 
 int main(int argc, char *argv[]) {
-
+	/* argument check */
 	if(argc < 2) {
 		fprintf(stderr, "ERROR: not enough arguments (%d)!\n", argc);
 		fprintf(stderr, "SYNTAX: %s <NUMBER-OF-MEGABYTES>\n", argv[0]);
@@ -62,6 +60,5 @@ int main(int argc, char *argv[]) {
             memLeak(atoi(argv[1]), argv[0]); /* convert string to int */
         }
 	}
-
 	return 0;
 }
