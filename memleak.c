@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 /* return 1, if variable is number, return 0 otherwise */
-int isNumber(char number[]) {
+int isNumber(char *number) {
 	
 	for (unsigned short i = 0; number[i] != 0; i++) {
 		if(number[i] > '9' || number[i] < '0') {
@@ -17,6 +17,7 @@ int isNumber(char number[]) {
 	return 1;
 }
 
+/* fill memory with specified amount of megabytes */
 void memLeak(int megabytes, char *program_name) {
 	int *ptr;
     
@@ -34,7 +35,7 @@ void memLeak(int megabytes, char *program_name) {
     /* loop to keep program running, so memory won't get free */
     printf("\nPress Ctrl+C to exit program and free the memory.\n");
 	while(1) {
-	
+		/* VOID */
     }
 }
 
