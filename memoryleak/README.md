@@ -1,10 +1,10 @@
 # memoryleak
 This program will fill RAM with specified amount of megabytes.
 
-## INSTALLATION
-1. make sure to have **make** and **git** pacakge installed. You can install it with:
+### INSTALLATION
+1. make sure to have **make** and **git** pacakges installed. You can install it with:
 * Debian based distros:
-`sudo apt install make git`
+```sudo apt install make git```
 1. clone repository:
 `git clone https://github.com/AISK11/cybersecurity`
 1. navigate to directory:
@@ -12,7 +12,7 @@ This program will fill RAM with specified amount of megabytes.
 1. compile memoryleak:
 `make`
 
-## Usage
+### Usage
 * Syntax:
 `./memoryleak <NUMBER-OF-MEGABYTES>`
 * Example (fill memory with 1000MB):
