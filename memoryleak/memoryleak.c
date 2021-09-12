@@ -19,8 +19,8 @@ int isNumber(char *number) {
 /* fill memory with specified amount of megabytes */
 void memLeak(int megabytes, char *program_name) {
     printf("Filling memory with value close to %dMB...\n", megabytes);
-
     int *ptr;
+    
     /* weird math to fill memory at least somewhat accurate */	
     for(int i = 0; i < (megabytes * 130000 / 4); i++) {
         ptr = malloc(1);
