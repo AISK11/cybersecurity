@@ -4,15 +4,43 @@ import sys
 import os
 
 def main():
-	# Default values
-	decrypt = 1; isText = 1; shift_number = 3
-	message_position = 0
+	# get arguments to work with them further
+	arguments = checkArguments()
+	decrypt = arguments[0]
+	shift_number = arguments[1]
+	isText = arguments[2]
+	message_position = arguments[3]
 
-	# Check if user typed help argument
+	# if input is a string from CLI
+	if isText:
+		output = processMessage(decrypt, shift_number, message_position)
+	# else input is a file
+	else:
+		output = processFile(decrypt, shift_number, message_position)
+
+	# nice formatting at the end, so user knows, if he encrypted or decrypted
+	if decrypt:
+		print("DECRYPTED:")
+	else:
+		print("ENCRYPTED:")
+	print(f"{output}")
+	return 0
+
+
+def getHelp():
+	print("HELP - ToDo")
+	exit()
+
+
+def checkArguments():
+	# default argument values
+	decrypt = 1; isText = 1; shift_number = 3; message_position = 0
+
+	# check if user typed help argument
 	if "-h" in sys.argv or "--help" in sys.argv:
-		print(f"Script to encrypt/decrypt caesar cipher.")
+		getHelp()
 
-	# Check passed arguments
+	# check passed arguments
 	i = 1
 	while i < len(sys.argv): 
 		if sys.argv[i] == "-d" or sys.argv[i] == "--decrypt":
@@ -20,21 +48,33 @@ def main():
 		elif sys.argv[i] == "-e" or sys.argv[i] == "--encrypt":
 			decrypt = 0
 		elif sys.argv[i] == "-n" or sys.argv[i] == "--number":
-			# Check if argument after "-n" is number
+			# check if argument after "-n" exists
+			if i+1 > len(sys.argv)-1:
+				print(f"ERROR! Expected argument after '{sys.argv[i]}'!", file=sys.stderr)
+				exit()
+			# check if argument after "-n" is number and overwrite default shift_number
 			try:
 				sys.argv[i+1] = int(sys.argv[i+1])
 				shift_number = sys.argv[i+1]
 				# next value should be int, so skip checking against conditions
 				i += 1
 			except:
-				print(f"Argument '{sys.argv[i+1]}' is not a number but is '{type(sys.argv[i+1]).__name__}'!", file=sys.stderr)
-				return -1
+				print(f"ERROR! Argument '{sys.argv[i+1]}' is not a number but is '{type(sys.argv[i+1]).__name__}'!", file=sys.stderr)
+				exit()
 		elif sys.argv[i] == "-t" or sys.argv[i] == "--text":
+			# check if argument after "-t" exists
+			if i+1 > len(sys.argv)-1:
+				print(f"ERROR! Expected argument after '{sys.argv[i]}'!", file=sys.stderr)
+				exit()		
 			isText = 1
 			message_position = i+1
 			# next value should be int, so skip checking against conditions
 			i += 1
 		elif sys.argv[i] == '-f' or sys.argv[i] == "--file":
+			# check if argument after "-t" exists
+			if i+1 > len(sys.argv)-1:
+				print(f"ERROR! Expected argument after '{sys.argv[i]}'!", file=sys.stderr)
+				exit()
 			isText = 0
 			# next value should be int, so skip checking against conditions
 			message_position = i+1
@@ -46,51 +86,50 @@ def main():
 		shift_number -= 26
 	while shift_number < -25:
 		shift_number += 26
-	
-	# Call encrypt or decrypt function
+
+	# check if message to decrypt was specified
 	if message_position != 0:
-		decryptMessage(decrypt, isText, shift_number, sys.argv[message_position])
-	
-	return 0
+		# Pass arguments back to main
+		return [decrypt, shift_number, isText, sys.argv[message_position]]
+	else:
+		print(f"ERROR! No text to encrypt/decrypt!", file=sys.stderr)
+		exit()
 
+def fileProcess():
+	print("todo")	
 
-def decryptMessage(decrypt, isText, shift_number, message):
-	decrypted_message = ""
+def processMessage(decrypt, shift_number, message):
+	message_processed = ""
 	
+	# negative decryption is encryption
 	if decrypt == 0:
 		shift_number *= -1
-
-
-
-	if isText:
-		i = 0
-		while i < len(message):
-			if message[i] >= 'A' and message[i] <= 'Z':
-				# convert chars to ints so math can be performed
-				if ord(message[i]) - shift_number < ord('A'):
-					decrypted_message += chr(ord(message[i]) - shift_number + 26)
-				# negative decryption (encryption)
-				elif ord(message[i]) - shift_number > ord('Z'):
-					decrypted_message += chr(ord(message[i]) - shift_number - 26)
-				else:
-					decrypted_message += chr(ord(message[i]) - shift_number)
-			elif message[i] >= 'a' and message[i] <= 'z':
-				# convert chars to ints so math can be performed
-				if ord(message[i]) - shift_number < ord('a'):
-					decrypted_message += chr(ord(message[i]) - shift_number + 26)
-				# negative decryption (encryption)
-				elif ord(message[i]) - shift_number > ord('z'):
-					decrypted_message += chr(ord(message[i]) - shift_number - 26)
-				else:
-					decrypted_message += chr(ord(message[i]) - shift_number)
+	
+	# process message and retrun message_processed
+	i = 0
+	while i < len(message):
+		if message[i] >= 'A' and message[i] <= 'Z':
+			# convert chars to ints so math can be performed
+			if ord(message[i]) - shift_number < ord('A'):
+				message_processed += chr(ord(message[i]) - shift_number + 26)
+			# negative decryption (encryption)
+			elif ord(message[i]) - shift_number > ord('Z'):
+				message_processed += chr(ord(message[i]) - shift_number - 26)
 			else:
-				decrypted_message += message[i]
-			i += 1
-			
-
-		if (decrypt):
-			print(f"DECRYPTED: {decrypted_message}")
+				message_processed += chr(ord(message[i]) - shift_number)
+		elif message[i] >= 'a' and message[i] <= 'z':
+			# convert chars to ints so math can be performed
+			if ord(message[i]) - shift_number < ord('a'):
+				message_processed += chr(ord(message[i]) - shift_number + 26)
+			# negative decryption (encryption)
+			elif ord(message[i]) - shift_number > ord('z'):
+				message_processed += chr(ord(message[i]) - shift_number - 26)
+			else:
+				message_processed += chr(ord(message[i]) - shift_number)
 		else:
-			print(f"ENCRYPTED: {decrypted_message}")
+			message_processed += message[i]
+		i += 1
+			
+	return message_processed	
 
 main()
