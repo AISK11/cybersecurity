@@ -24,7 +24,7 @@ def main():
 		output = processFile(decrypt, shift_number, message_position)
 
 	# nice formatting at the end, so user knows, if he encrypted or decrypted
-	if not ("-q" in sys.argv or "--quiet" in sys.argv):
+	if verbose:
 		if decrypt:
 			print("DECRYPTED:")
 		else:
@@ -40,9 +40,10 @@ def getHelp():
 	print("-h      | --help      \tPrint (this) help menu.")
 	print("-d      | --decrypt   \tUse decryption - shift letters up X characters. (DEFAULT)")
 	print("-e      | --encrypt   \tUse encryption - shift letters down X characters.")
-	print("-n X    | --number X  \tSpecify X, when X is a numerival value used to shift letters. (DEFAULT=3)")
+	print("-n X    | --number X  \tSpecify X, when X is a numerical value used to shift letters. (DEFAULT=3)")
 	print("-t TEXT | --text TEXT \tSpecify, that stdin should be read.")
 	print("-f FILE | --file FILE \tSPECIFY, that stdin should be read from a file.")
+	print("-v      | --verbose   \tPrint header. (DEFAULT)")
 	print("-q      | --quiet     \tPrint decrypted/encrypted output only.")
 	print("\nEXAMPLES:")
 	print("Decrypt string with default letter shift by 3:")
@@ -57,7 +58,7 @@ def getHelp():
 
 def checkArguments():
 	# default argument values
-	decrypt = 1; isText = 1; shift_number = 3; message_position = 0
+	decrypt = 1; isText = 1; shift_number = 3; message_position = 0; verbose = 1
 
 	# check if user typed help argument
 	if "-h" in sys.argv or "--help" in sys.argv:
@@ -93,7 +94,7 @@ def checkArguments():
 			message_position = i+1
 			# next value should be int, so skip checking against conditions
 			i += 1
-		elif sys.argv[i] == '-f' or sys.argv[i] == "--file":
+		elif sys.argv[i] == "-f" or sys.argv[i] == "--file":
 			# check if argument after "-t" exists
 			if i+1 > len(sys.argv)-1:
 				print(f"ERROR! Expected argument after '{sys.argv[i]}'!", file=sys.stderr)
@@ -101,7 +102,11 @@ def checkArguments():
 			isText = 0
 			# next value should be int, so skip checking against conditions
 			message_position = i+1
-			i += 1		
+			i += 1
+		elif sys.argv[i] == "-q" or sys.argv[i] == "--quiet":
+			verbose = 0
+		elif sys.argv[i] == "-v" or sys.argv[i] == "--verbose":
+			verbose = 1
 		i += 1
 
 	# A = 0, Z = 26 -> cannot be higher than 26
@@ -113,7 +118,7 @@ def checkArguments():
 	# check if message to decrypt was specified
 	if message_position != 0:
 		# Pass arguments back to main
-		return [decrypt, shift_number, isText, sys.argv[message_position]]
+		return [decrypt, shift_number, isText, sys.argv[message_position], verbose]
 	else:
 		print(f"ERROR! No text to encrypt/decrypt!", file=sys.stderr)
 		exit()
