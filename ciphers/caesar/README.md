@@ -16,7 +16,7 @@ This program will fill RAM with specified amount of megabytes.
 * Get help:\
 `./caesar.py -h`
 * Decrypt string with default letter shift by 3:\
-`./caesar.py -t ENCRYPTED-TEXT`
+`./caesar.py -t ENCRYPTED-TEXT`\
 `./caesar.py -d -s 3 -t ENCRYPTED-TEXT`
 * Decrypt specified file by 5 to 8 letter shift with quiet output:\
 `./caesar.py -d -s 5,8 -f ENCRYPTED-FILE -q`
