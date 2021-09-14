@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+###################################################
+# Author: AISK11                                  #
+# This script encrypts and decrypts Caesar cipher # 
+###################################################
+
 import sys
 import os
 
@@ -19,16 +24,34 @@ def main():
 		output = processFile(decrypt, shift_number, message_position)
 
 	# nice formatting at the end, so user knows, if he encrypted or decrypted
-	if decrypt:
-		print("DECRYPTED:")
-	else:
-		print("ENCRYPTED:")
+	if not ("-q" in sys.argv or "--quiet" in sys.argv):
+		if decrypt:
+			print("DECRYPTED:")
+		else:
+			print("ENCRYPTED:")
 	print(f"{output}")
 	return 0
 
 
 def getHelp():
-	print("HELP - ToDo")
+	print("This script encrypts and decrypts Caesar cipher.\n")
+	print(f"SYNTAX:\n{sys.argv[0]} [OPTIONS] <-t TEXT|-f FILE>\n")
+	print("OPTIONS:")
+	print("-h      | --help      \tPrint (this) help menu.")
+	print("-d      | --decrypt   \tUse decryption - shift letters up X characters. (DEFAULT)")
+	print("-e      | --encrypt   \tUse encryption - shift letters down X characters.")
+	print("-n X    | --number X  \tSpecify X, when X is a numerival value used to shift letters. (DEFAULT=3)")
+	print("-t TEXT | --text TEXT \tSpecify, that stdin should be read.")
+	print("-f FILE | --file FILE \tSPECIFY, that stdin should be read from a file.")
+	print("-q      | --quiet     \tPrint decrypted/encrypted output only.")
+	print("\nEXAMPLES:")
+	print("Decrypt string with default letter shift by 3:")
+	print(f"    {sys.argv[0]} -t ENCRYPTED-TEXT")
+	print(f"    {sys.argv[0]} -d -n 3 -t ENCRYPTED-TEXT")
+	print("Decrypt specified file by 5 letter shift with quiet output:")
+	print(f"    {sys.argv[0]} -d -n 5 -f ENCRYPTED-FILE -q")
+	print("Encrypt specified file by 1 letter shift with quiet output:")
+	print(f"    {sys.argv[0]} -e -n 1 -f DECRYPTED-FILE -q")
 	exit()
 
 
@@ -78,7 +101,7 @@ def checkArguments():
 			isText = 0
 			# next value should be int, so skip checking against conditions
 			message_position = i+1
-			i += 1
+			i += 1		
 		i += 1
 
 	# A = 0, Z = 26 -> cannot be higher than 26
@@ -106,7 +129,6 @@ def processFile(decrypt, shift_number, input_file):
 		
 		# read whole file
 		line = fo.read(-1)
-		print(f"{line}")
 		
 		# close file
 		fo.close()
@@ -148,5 +170,6 @@ def processMessage(decrypt, shift_number, message):
 		i += 1
 			
 	return message_processed	
+
 
 main()
