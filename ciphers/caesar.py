@@ -95,8 +95,25 @@ def checkArguments():
 		print(f"ERROR! No text to encrypt/decrypt!", file=sys.stderr)
 		exit()
 
-def fileProcess():
-	print("todo")	
+def processFile(decrypt, shift_number, input_file):
+	# check if file input_file exists
+	if not os.path.exists(input_file):
+		print(f"ERROR! File '{input_file}' does not exists!", file=sys.stderr)
+		exit()
+	else:
+		# open file
+		fo = open(input_file, "r+")
+		
+		# read whole file
+		line = fo.read(-1)
+		print(f"{line}")
+		
+		# close file
+		fo.close()
+
+	# process file content
+	return processMessage(decrypt, shift_number, line)
+
 
 def processMessage(decrypt, shift_number, message):
 	message_processed = ""
