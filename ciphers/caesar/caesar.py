@@ -58,6 +58,8 @@ def getHelp():
     print(f"    {sys.argv[0]} -d -s 3 -t ENCRYPTED-TEXT")
     print("Decrypt specified file by 5 to 8 letter shift with quiet output:")
     print(f"    {sys.argv[0]} -d -s 5,8 -f ENCRYPTED-FILE -q")
+    print("Decrypt specified string with all possible letter shifts:")
+    print(f"    {sys.argv[0]} -d -s 0-25 -t ENCRYPTED-TEXT")
     print("Encrypt specified file by 1, 3, 8 to 11 and 15 letter shift with quiet output:")
     print(f"    {sys.argv[0]} -e -s 1,3,8-11,15 -f DECRYPTED-FILE -q")
     exit()
