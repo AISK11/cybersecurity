@@ -1,289 +1,257 @@
 #!/usr/bin/env python3
 
 ###################################################
-# Author: AISK11                                  #
+# Author: AISK11								  #
 # This script encrypts and decrypts Caesar cipher #
 ###################################################
 
 import sys
 import os
+import argparse  # https://docs.python.org/3/library/argparse.html#module-argparse
 
 
 def main():
-    # get arguments to work with them further
-    arguments = checkArguments()
-    decrypt = arguments[0]
-    isText = arguments[1]
-    num_list = arguments[2]
-    message_position = arguments[3]
-    verbose = arguments[4]
+    # create ArgumentParser object and add description of program:
+    parser = argparse.ArgumentParser(
+        description="Decrypts and encrypts Caesar cipher.")
 
-    # input is a string from CLI
-    if isText:
-        output = processMessage(decrypt, num_list, message_position)
-    # input is a file
+    # mutually exclusive arguments:
+    crypt = parser.add_mutually_exclusive_group()
+    crypt.add_argument(
+        "-d",
+        "--decrypt",
+        action="store_true",
+        default=True,
+        help="decryption - shift letters <<< by X characters (DEFAULT)")
+    crypt.add_argument(
+        "-e",
+        "--encrypt",
+        action="store_true",
+        default=False,
+        help="encryption - shift letters >>> by X characters")
+    # shift argument:
+    parser.add_argument(
+        "-s",
+        "--shift",
+        default="3",
+        help="specify X, when X is a numerical value or range used to shift letters (DEFAULT 3)")
+    # mutually exclusive arguments:
+    verbosity = parser.add_mutually_exclusive_group()
+    verbosity.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        default=True,
+        help="print header (DEFAULT)")
+    verbosity.add_argument(
+        "-q",
+        "--quiet",
+        action="store_true",
+        default=False,
+        help="print decrypted/encrypted output only")
+    # mutually exclusice arguments:
+    text = parser.add_mutually_exclusive_group()
+    text.add_argument(
+        "-t",
+        "--text",
+        action="store_true",
+        default=True,
+        help="cipher should be read from stdin (DEFAULT)")
+    text.add_argument(
+        "-f",
+        "--file",
+        action="store_true",
+        default=False,
+        help="cipher should be read from file")
+    # positional argument:
+    parser.add_argument(
+        "MESSAGE",
+        help="specify message or file from which text/cipher will be read")
+
+    # pass arguments
+    args = parser.parse_args()
+
+    # return list filled with numbers according to specified range:
+    shift_range = shiftRange(args.shift)
+
+    # check if encrypt flag was set:
+    decrypt = 1
+    if args.encrypt:
+        decrypt = 0
+
+    # check if file flag was set and return list full of outputs to "output":
+    if args.file:
+        output = processFile(decrypt, shift_range, args.MESSAGE)
     else:
-        output = processFile(decrypt, num_list, message_position)
+        output = processMessage(decrypt, shift_range, args.MESSAGE)
 
-    # loop through output list
+    # loop through output list:
     i = 0
-    while i < len(num_list):
-        if verbose:
+    while i < len(shift_range):
+        if args.quiet:
+            print(f"{output[i]}\n")
+        else:
             if decrypt:
-                print(f"DECRYPTED (using {num_list[i]} shift):")
+                print(f"[*] DECRYPTED (using {shift_range[i]} shifts):")
             else:
-                print(f"ENCRYPTED (using {num_list[i] * -1} shift):")
-        print(f"{output[i]}\n")
+                print(f"[*] ENCRYPTED (using {shift_range[i] * -1} shifts):")
+            print(f"{output[i]}\n")
         i += 1
 
-    return 0
+    # exit program with return code 0:
+    sys.exit(0)
 
 
-# print help and exit
-def getHelp():
-    print("This script encrypts and decrypts Caesar cipher.\n")
-    print(f"SYNTAX:\n{sys.argv[0]} [OPTIONS] <-t TEXT|-f FILE>\n")
-    print("OPTIONS:")
-    print("-h      | --help      \tPrint (this) help menu.")
-    print("-d      | --decrypt   \tUse decryption - shift letters up X characters. (DEFAULT)")
-    print("-e      | --encrypt   \tUse encryption - shift letters down X characters.")
-    print("-s X    | --shift X   \tSpecify X, when X is a numerical value or range used to shift letters. (DEFAULT=3)")
-    print("-t TEXT | --text TEXT \tSpecify, that stdin should be read.")
-    print("-f FILE | --file FILE \tSPECIFY, that stdin should be read from a file.")
-    print("-v      | --verbose   \tPrint header. (DEFAULT)")
-    print("-q      | --quiet     \tPrint decrypted/encrypted output only.")
-    print("\nEXAMPLES:")
-    print("Decrypt string with default letter shift by 3:")
-    print(f"    {sys.argv[0]} -t ENCRYPTED-TEXT")
-    print(f"    {sys.argv[0]} -d -s 3 -t ENCRYPTED-TEXT")
-    print("Decrypt specified file by 5 to 8 letter shift with quiet output:")
-    print(f"    {sys.argv[0]} -d -s 5-8 -f ENCRYPTED-FILE -q")
-    print("Decrypt specified string with all possible letter shifts:")
-    print(f"    {sys.argv[0]} -d -s 0-25 -t ENCRYPTED-TEXT")
-    print("Encrypt specified file by 1, 3, 8 to 11 and 15 letter shift with quiet output:")
-    print(f"    {sys.argv[0]} -e -s 1,3,8-11,15 -f DECRYPTED-FILE -q")
-    exit()
+# accepts range (string) and converts it to integer list
+def shiftRange(shiftRange):
+    num_list = []
+    delim_list = []
 
-
-def fillDelimeterWithNumbers(num_list, delimeter_list):
+    # loop through all characters and separate them (numbers to "num_list",
+    # delimeters to "delim_list"):
+    num = ""  # temp variable, that separates 0-9 from delimeters ',' and '-'
     i = 0
+    while i < len(shiftRange):
+        # check if character is number, add to "num" (string):
+        if shiftRange[i] >= "0" and shiftRange[i] <= "9":
+            num += shiftRange[i]
+            # if there is no more delimeter after number, then also add to
+            # "num_list":
+            if i == len(shiftRange) - 1:
+                if num != "":
+                    num_list.append(int(num))
+        # check if character is delimeter, add int(num) to list and current
+        # char to "delim_list":
+        elif shiftRange[i] == "-" or shiftRange[i] == ",":
+            if num != "":
+                num_list.append(int(num))
+            delim_list.append(shiftRange[i])
+            num = ""
+        # Only numbers and '-', ',' are acceptable:
+        else:
+            print(
+                f"[!] ERROR! Unknown character detected in '{shiftRange}'!",
+                file=sys.stderr)
+            sys.exit(1)
+        i += 1
 
-    # fill list with default 3 if list is empty
-    if num_list == []:
-        num_list.append(3)
+    # len(delim_list) must always equal to (len(num_list) - 1)!
+    if len(delim_list) >= len(num_list):
+        print(f"[!] ERROR! Cannot determine range for '{shiftRange}'!")
+        sys.exit(2)
 
+    # translate delimeters to number ranges in variable "new_num_list":
+    i = 0
     # add first number to list, as delimeter does not affect first number
     new_num_list = [num_list[i]]
-    x = 0
-    # iterate through delimeters
-    while i < len(delimeter_list):
-        # if delimeter is simple ',', then add next number to list, as current
-        # is already in the list, if is not already in
-        if delimeter_list[i] == ",":
-            if not num_list[i + 1] in new_num_list:
+    while i < len(delim_list):
+        # if delimeter is simple ',' then add next number to list, as current
+        # is already in the list:
+        if delim_list[i] == ',':
+            if num_list[i + 1] not in new_num_list:
                 new_num_list.append(num_list[i + 1])
             else:
                 print(
-                    f"ERROR! '{num_list[i+1]}' is specified multiple times!",
+                    f"[!] ERROR! Number '{num_list[i+1]}' is specified multiple times!",
                     file=sys.stderr)
+                sys.exit(3)
         # if delimeter is '-' (X-Y) then set X as current and keep appending
-        # until Y is reached
+        # until Y is reached:
         else:
             x = num_list[i]
             y = num_list[i + 1]
-            # check if X is < than Y
+            # check if X is < than Y:
             if x >= y:
-                print(f"ERROR! Number '{x}' must be smaller than '{y}'!")
-                exit()
-            # while X <= Y
+                print(
+                    f"[!] ERROR! Number '{x}' must be smaller than '{y}!",
+                    file=sys.stderr)
+                sys.exit(4)
+            # while X < Y:
             while x < y:
+                # x+1 because current number X is already in a list
                 new_num_list.append(x + 1)
                 x += 1
         i += 1
 
-    # A = 0, Z = 25 -> cannot be higher than 25
+    # A = 0, Z = 25 -> cannot be higher than 25:
     i = 0
     while i < len(new_num_list):
         while new_num_list[i] > 25:
             new_num_list[i] -= 26
         i += 1
-    # sort numbers in list and omit duplicates
-    clean_list = []
+
+    # previous lowering numbers bigger than 25 can create duplicates:
+    num_list = []  # this variable was no longer needed, so recycling
     i = 0
     while i < len(new_num_list):
-        if not new_num_list[i] in clean_list:
-            clean_list.append(new_num_list[i])
+        if new_num_list[i] not in num_list:
+            num_list.append(new_num_list[i])
         i += 1
-    return clean_list
+    # sort numbers from lowest to highest:
+    num_list.sort()
+
+    # return clean "num_list"
+    return num_list
 
 
-# check passed arguments and pass them to main
-def checkArguments():
-    # default argument values
-    decrypt = 1
-    isText = 1
-    num_list = []
-    delimeter_list = []
-    message_position = 0
-    verbose = 1
-
-    # check if user typed help argument
-    if "-h" in sys.argv or "--help" in sys.argv:
-        getHelp()
-
-    # loop through passed arguments
-    i = 1
-    while i < len(sys.argv):
-        if sys.argv[i] == "-d" or sys.argv[i] == "--decrypt":
-            decrypt = 1
-        elif sys.argv[i] == "-e" or sys.argv[i] == "--encrypt":
-            decrypt = 0
-
-        elif sys.argv[i] == "-s" or sys.argv[i] == "--shift":
-            # check if argument after "-n" exists
-            if i + 1 > len(sys.argv) - 1:
-                print(
-                    f"ERROR! Expected argument after '{sys.argv[i]}'!",
-                    file=sys.stderr)
-                exit()
-
-            # next argument e.g. "5-11,14,16,18-23"
-            number_range = sys.argv[i + 1]
-            num_index = 0				 # iteration for while loop
-            num = ""					 # this variable will be delimiting numbers from ',' and '-'
-            # delimeter_list = []		 # list full of delimeters (defined above), here for the comment
-            # num_list = []                            # after number is found,
-            # it will be converted to int and appended to this list, defined
-            # above, here for the comment
-            while num_index < len(number_range):
-                # if character is number, add to "num" (string)
-                if number_range[num_index] >= "0" and number_range[num_index] <= "9":
-                    num += number_range[num_index]
-                    # if there is no more delimeter at the end, then also add
-                    # number to num_list
-                    if num_index == len(number_range) - 1:
-                        if num != "":
-                            num_list.append(int(num))
-                # if character is delimeter, convert num to string, add to list and clear value
-                # also add delimeter to delimeter list
-                elif number_range[num_index] == "-":
-                    if num != "":
-                        num_list.append(int(num))
-                    delimeter_list.append("-")
-                    num = ""
-                # 2nd type of delimeter
-                elif number_range[num_index] == ",":
-                    if num != "":
-                        num_list.append(int(num))
-                    delimeter_list.append(",")
-                    num = ""
-                # wrong input was put
-                else:
-                    print(
-                        f"ERROR! Wrong input was detected! '{number_range}' is in a wrong format!",
-                        file=sys.stderr)
-                    exit()
-                num_index += 1
-            # len(delimeter_list) must always equal len(num_list) - 1
-            if len(delimeter_list) >= len(num_list):
-                print(
-                    f"ERROR! Wrong input was detected! '{number_range}' is in a wrong format!",
-                    file=sys.stderr)
-                exit()
-
-        elif sys.argv[i] == "-t" or sys.argv[i] == "--text":
-            # check if argument after "-t" exists
-            if i + 1 > len(sys.argv) - 1:
-                print(
-                    f"ERROR! Expected argument after '{sys.argv[i]}'!",
-                    file=sys.stderr)
-                exit()
-            isText = 1
-            message_position = i + 1
-            # next value should be int, so skip checking against conditions
-            i += 1
-        elif sys.argv[i] == "-f" or sys.argv[i] == "--file":
-            # check if argument after "-t" exists
-            if i + 1 > len(sys.argv) - 1:
-                print(
-                    f"ERROR! Expected argument after '{sys.argv[i]}'!",
-                    file=sys.stderr)
-                exit()
-            isText = 0
-            # next value should be int, so skip checking against conditions
-            message_position = i + 1
-            i += 1
-        elif sys.argv[i] == "-q" or sys.argv[i] == "--quiet":
-            verbose = 0
-        elif sys.argv[i] == "-v" or sys.argv[i] == "--verbose":
-            verbose = 1
-        i += 1
-
-    # Get all specified numbers form a range
-    num_list = fillDelimeterWithNumbers(num_list, delimeter_list)
-
-    # check if message to decrypt was specified
-    if message_position != 0:
-        # Pass arguments back to main
-        return [decrypt, isText, num_list, sys.argv[message_position], verbose]
-    else:
-        print(f"ERROR! No text to encrypt/decrypt!", file=sys.stderr)
-        exit()
-
-
-def processFile(decrypt, num_list, input_file):
-    # check if file input_file exists
+def processFile(decrypt, shift_range, input_file):
+    # check if file "input_file" exists:
     if not os.path.exists(input_file):
-        print(f"ERROR! File '{input_file}' does not exists!", file=sys.stderr)
-        exit()
+        print(
+            f"[!] ERROR! File '{input_file}' does not exists!",
+            file=sys.stderr)
+        sys.exit(5)
     else:
         # open file
         fo = open(input_file, "r+")
 
-        # read whole file
+        # read whole file to variable "line"
         line = fo.read(-1)
 
         # close file
         fo.close()
 
-    # process file content
-    return processMessage(decrypt, num_list, line)
+    # process file content:
+    return processMessage(decrypt, shift_range, line)
 
 
-def processMessage(decrypt, num_list, message):
+def processMessage(decrypt, shift_range, message):
     message_processed = ""
 
-    # negative decryption is encryption
+    # negative decryption is encryption:
     if decrypt == 0:
         i = 0
-        while i < len(num_list):
-            num_list[i] *= -1
+        while i < len(shift_range):
+            shift_range[i] *= -1
             i += 1
 
+    # as multiple ranges can be decrypted, each answer will be an item in
+    # "output_list"
     output_list = []
-    output_index = 0
-    while output_index < len(num_list):
-        shift_number = num_list[output_index]
-        # process message and retrun message_processed
+    output_index = 0  # first decryption
+    while output_index < len(shift_range):
+        # current shift which will be used for decryption from "shift_range"
+        shift_number = shift_range[output_index]
+        # decrypt/encrypt the message:
         i = 0
         while i < len(message):
             if message[i] >= 'A' and message[i] <= 'Z':
-                # convert chars to ints so math can be performed
+                # convert chars to ints so math can be performed:
                 if ord(message[i]) - shift_number < ord('A'):
                     message_processed += chr(ord(message[i]) -
                                              shift_number + 26)
-                # negative decryption (encryption)
+                # negative decryption (encryption):
                 elif ord(message[i]) - shift_number > ord('Z'):
                     message_processed += chr(ord(message[i]) -
                                              shift_number - 26)
                 else:
                     message_processed += chr(ord(message[i]) - shift_number)
             elif message[i] >= 'a' and message[i] <= 'z':
-                # convert chars to ints so math can be performed
+                # convert chars to ints so math can be performed:
                 if ord(message[i]) - shift_number < ord('a'):
                     message_processed += chr(ord(message[i]) -
                                              shift_number + 26)
-                # negative decryption (encryption)
+                # negative decryption (encryption):
                 elif ord(message[i]) - shift_number > ord('z'):
                     message_processed += chr(ord(message[i]) -
                                              shift_number - 26)
