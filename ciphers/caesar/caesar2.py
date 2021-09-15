@@ -60,7 +60,7 @@ def main():
 			if decrypt:
 				print(f"[*] DECRYPTED (using {shift_range[i]} shifts):")
 			else:
-				print(f"[*] ENCRYPTED (using {shift_range[i]} shifts):")
+				print(f"[*] ENCRYPTED (using {shift_range[i] * -1} shifts):")
 			print(f"{output[i]}\n")
 		i += 1
 
