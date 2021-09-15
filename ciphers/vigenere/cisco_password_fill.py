@@ -36,18 +36,8 @@ def main():
 		# print "OUTPUT_CLEAN" to stdout 
 		print(f"{OUTPUT_CLEAN}")
 		
-		# Testing with a file, it turns out, xclip can accept new line, there is something just with a python
-		# copy "OUTPUT_CLEAN" to clipboard (xclip does not accepts string containing "\n", so file workaround)
-		# create file
-		FILE = ".tmp_cisco_pass_fill"
-		fw = open(FILE, "w")
-		# write variable to file
-		fw.write(f"{OUTPUT_CLEAN}")	
-		# load file to xclip
-		os.system(f'cat {FILE} | xclip -selection clipboard')
-		# close file
-		fw.close()
-
+		# print "OUTPUT_CLEAN" alsto to xlcip (linux X clipboard)
+		os.system(f'echo -n "{OUTPUT_CLEAN}" | xclip -selection clipboard') #| xclip -selection clipboard')
 
 		# wait for an input, so it prints one set of chars at a time
 		input()
