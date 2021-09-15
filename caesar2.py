@@ -140,33 +140,34 @@ def processMessage(decrypt, shift_range, message):
 
 	# negative decryption is encryption:
 	if decrypt == 0:
-		i = 0
+		i = 0 
 		while i < len(shift_range):
 			shift_range[i] *= -1
 			i += 1
 
-	
 	output_list = [] # as multiple ranges can be decrypted, each answer will be an item in "output_list"
-	output_index = 0 # first decryption
-	while output_index < len(shift_range):
+	output_index = 0 # first decryption 
+	while output_index < len(shift_range): 
 		shift_number = shift_range[output_index] # current shift which will be used for decryption from "shift_range"
 		# decrypt/encrypt the message:
-		i = 0
+		i = 0 
 		while i < len(message):
 			if message[i] >= 'A' and message[i] <= 'Z':
 				# convert chars to ints so math can be performed:
 				if ord(message[i]) - shift_number < ord('A'):
-					message_processed += chr(ord(message[i]) - shift_number + 26)
+					message_processed += chr(ord(message[i]) - shift_number + 26) 
+				# negative decryption (encryption):
 				elif ord(message[i]) - shift_number > ord('Z'):
-					message_processed += chr(ord(message[i]) - shift_number - 26)
+					message_processed += chr(ord(message[i]) - shift_number - 26) 
 				else:
 					message_processed += chr(ord(message[i]) - shift_number)
 			elif message[i] >= 'a' and message[i] <= 'z':
 				# convert chars to ints so math can be performed:
 				if ord(message[i]) - shift_number < ord('a'):
-					message_processed += chr(ord(message[i]) - shift_number + 26)
+					message_processed += chr(ord(message[i]) - shift_number + 26) 
+				# negative decryption (encryption):
 				elif ord(message[i]) - shift_number > ord('z'):
-					message_processed += chr(ord(message[i]) - shift_number - 26)
+					message_processed += chr(ord(message[i]) - shift_number - 26) 
 				else:
 					message_processed += chr(ord(message[i]) - shift_number)
 			else:
@@ -176,7 +177,7 @@ def processMessage(decrypt, shift_range, message):
 		message_processed = ""
 		output_index += 1
 
-		return output_list
+	return output_list
 
 
 main()
