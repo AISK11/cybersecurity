@@ -68,16 +68,61 @@ def shiftRange(shiftRange):
 				num_list.append(int(num))
 			delim_list.append(shiftRange[i])
 			num = ""
-		# wrong input:
+		# Only numbers and '-', ',' are acceptable:
 		else:
 			print(f"[!] ERROR! Unknown character detected in '{shiftRange}'!", file=sys.stderr)
 			sys.exit(1)
 		i += 1
 
+	# len(delim_list) must always equal to (len(num_list) - 1)!
+	if len(delim_list) >= len(num_list):
+		print(f"[!] ERROR! Cannot determine range for '{shiftRange}'!")
+		sys.exit(2)
 
-	print(f"num_list: {num_list}")
-	print(f"delim_list: {delim_list}")
+	# translate delimeters to number ranges in variable "new_num_list":
+	i = 0
+	new_num_list = [num_list[i]] # add first number to list, as delimeter does not affect first number
+	while i < len(delim_list):
+		# if delimeter is simple ',' then add next number to list, as current is already in the list:
+		if delim_list[i] == ',':
+			if num_list[i+1] not in new_num_list:
+				new_num_list.append(num_list[i+1])
+			else:
+				print(f"[!] ERROR! Number '{num_list[i+1]}' is specified multiple times!", file=sys.stderr)
+				sys.exit(3)
+		# if delimeter is '-' (X-Y) then set X as current and keep appending until Y is reached:
+		else:
+			x = num_list[i]
+			y = num_list[i+1]
+			# check if X is < than Y:
+			if x >= y:
+				print(f"[!] ERROR! Number '{x}' must be smaller than '{y}!")
+				sys.exit(4)
+			# while X < Y:
+			while x < y:
+				new_num_list.append(x+1) # x+1 because current number X is already in a list
+				x += 1
+		i += 1
 
+	# A = 0, Z = 25 -> cannot be higher than 25:
+	i = 0
+	while i < len(new_num_list):
+		while new_num_list[i] > 25:
+			new_num_list[i] -= 26
+		i += 1
+
+	# previous lowering numbers bigger than 25 can create duplicates:
+	num_list = [] # this variable was no longer needed, so recycling
+	i = 0
+	while i < len(new_num_list):
+		if new_num_list[i] not in num_list:
+			num_list.append(new_num_list[i])
+		i += 1
+	# sort numbers from lowest to highest:
+	num_list.sort()
+
+	# return clean "num_list"
 	return num_list
+
 
 main()
