@@ -2,8 +2,9 @@
 
 #####################################################
 # Author: AISK11                                    #
-# This script will loop through all  writable	    #
-# characters, copy 20 of them  to clipboard         #
+#                                                   #
+# This script will loop through all writable	    #
+# characters, copy 20 of them to clipboard          #
 # (both primary and clipboard) and outputs cisco    #
 # vigenere cipher for them.                         #
 #                                                   #
