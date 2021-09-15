@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 
+#####################################################
+# Author: AISK11                                    #
+# This script will loop through all  writable	    #
+# characters, copy 20 of them  to clipboard         #
+# (both primary and clipboard) and outputs cisco    #
+# vigenere cipher for them.                         #
+#                                                   #
+# This is an auxiliary program used for determining #
+# cisco IOS vigenere cipher key                     #
+#####################################################
 
 import os
-
 
 def main():
 	# Do password encryption:
@@ -36,8 +45,9 @@ def main():
 		# print "OUTPUT_CLEAN" to stdout 
 		print(f"{OUTPUT_CLEAN}")
 		
-		# print "OUTPUT_CLEAN" alsto to xlcip (linux X clipboard)
-		os.system(f'echo -n "{OUTPUT_CLEAN}" | xclip -selection clipboard') #| xclip -selection clipboard')
+		# print "OUTPUT_CLEAN" alsto to xclip (linux X clipboard)
+		os.system(f'echo -n "{OUTPUT_CLEAN}" | xclip -selection clipboard') 
+		os.system(f'echo -n "{OUTPUT_CLEAN}" | xclip -selection primary')
 
 		# wait for an input, so it prints one set of chars at a time
 		input()
