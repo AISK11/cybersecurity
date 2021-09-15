@@ -16,8 +16,8 @@ def main():
 
 	# mutually exclusive arguments:
 	crypt = parser.add_mutually_exclusive_group()
-	crypt.add_argument("-d", "--decrypt", action="store_true", default=True, help="decryption - shift letters up X characters (DEFAULT)")
-	crypt.add_argument("-e", "--encrypt", action="store_true", default=False, help="encryption - shift letters down X characters")
+	crypt.add_argument("-d", "--decrypt", action="store_true", default=True, help="decryption - shift letters <<< by X characters (DEFAULT)")
+	crypt.add_argument("-e", "--encrypt", action="store_true", default=False, help="encryption - shift letters >>> by X characters")
 	# shift argument:
 	parser.add_argument("-s", "--shift", default="3", help="specify X, when X is a numerical value or range used to shift letters (DEFAULT 3)")
 	# mutually exclusive arguments:
@@ -44,13 +44,26 @@ def main():
 	if args.encrypt:
 		decrypt = 0
 
-	# check if file flag was set:
+	# check if file flag was set and return list full of outputs to "output":
 	if args.file:
 		output = processFile(decrypt, shift_range, args.MESSAGE)
 	else:
 		output = processMessage(decrypt, shift_range, args.MESSAGE)
 
-	print(f"{output}")
+
+	# loop through output list:
+	i = 0
+	while i < len(shift_range):
+		if args.quiet:
+			print(f"{output[i]}\n")
+		else:
+			if decrypt:
+				print(f"[*] DECRYPTED (using {shift_range[i]} shifts):")
+			else:
+				print(f"[*] ENCRYPTED (using {shift_range[i] * -1} shifts):")
+			print(f"{output[i]}\n")
+		i += 1
+
 
 	# exit program with return code 0:
 	sys.exit(0)
@@ -133,6 +146,25 @@ def shiftRange(shiftRange):
 
 	# return clean "num_list"
 	return num_list
+
+
+def processFile(decrypt, shift_range, input_file):
+	# check if file "input_file" exists:
+	if not os.path.exists(input_file):
+		print(f"[!] ERROR! File '{input_file}' does not exists!", file=sys.stderr)
+		sys.exit(5)
+	else:
+		# open file
+		fo = open(input_file, "r+")
+
+		# read whole file to variable "line"
+		line = fo.read(-1)
+
+		# close file
+		fo.close()
+
+	#process file content:
+	return processMessage(decrypt, shift_range, line)
 
 
 def processMessage(decrypt, shift_range, message):
