@@ -21,6 +21,7 @@ def main():
 	OUTPUT.append("enable")
 	OUTPUT.append("conf t")
 	OUTPUT.append("service password-encryption")
+	OUTPUT.append("no ip domain-lookup")
 	OUTPUT.append("end")
 	OUTPUT.append("!")
 	OUTPUT.append("!")
