@@ -1,5 +1,5 @@
 # caesar.py
-This program will fill RAM with specified amount of megabytes.
+Decrypts and encrypts Caesar cipher.
 
 ### INSTALLATION
 1. make sure to have **python3**, **make** and **git** pacakges installed. You can install it with:
@@ -12,15 +12,16 @@ This program will fill RAM with specified amount of megabytes.
 1. make executable:\
 `make`
 
-### Usage
+### Syntax
+`./caesar.py [-h] [-d | -e] [-s SHIFT] [-u] [-l] [-v | -q] [-t | -f] MESSAGE`
+
+### Examples
 * Get help:\
 `./caesar.py -h`
 * Decrypt string with default letter shift by 3:\
-`./caesar.py -t ENCRYPTED-TEXT`\
-`./caesar.py -d -s 3 -t ENCRYPTED-TEXT`
-* Decrypt specified file by 5 to 8 letter shift with quiet output:\
-`./caesar.py -d -s 5-8 -f ENCRYPTED-FILE -q`
-* Decrypt specified string with all possible letter shifts:\
-`./caesar.py -d -s 0-25 -t ENCRYPTED-TEXT`
-* Encrypt specified file by 1, 3, 8 to 11 and 15 letter shift with quiet output:\
-`./caesar.py -e -s 1,3,8-11,15 -f DECRYPTED-FILE -q`
+`./caesar.py MESSAGE`\
+`./caesar.py -d -s 3 -v -t MESSAGE`
+* Decrypt specified file by all possible letter shift with quiet output:\
+`./caesar.py -s 0-25 -q -f FILE`
+* Encrypt specified file by 11 and 14 letter shift with letters only in uppercase:\
+`./caesar.py -e -s 11,14 -u -l -f FILE`
