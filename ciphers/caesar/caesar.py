@@ -7,7 +7,7 @@
 
 import sys
 import os
-import argparse  # https://docs.python.org/3/library/argparse.html#module-argparse
+import argparse
 
 
 def main():
