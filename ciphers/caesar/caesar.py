@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 ###################################################
-# Author: AISK11								  #
+# Author: AISK11                                  #
 # This script encrypts and decrypts Caesar cipher #
 ###################################################
 
@@ -35,6 +35,20 @@ def main():
         "--shift",
         default="3",
         help="specify X, when X is a numerical value or range used to shift letters (DEFAULT 3)")
+    # upperclase:
+    parser.add_argument(
+        "-u",
+        "--uppercase",
+        action="store_true",
+        default=False,
+        help="output in uppercase letters")
+    # no spaces:
+    parser.add_argument(
+        "-l",
+        "--letters",
+        action="store_true",
+        default=False,
+        help="remove everything except for letters")
     # mutually exclusive arguments:
     verbosity = parser.add_mutually_exclusive_group()
     verbosity.add_argument(
@@ -84,6 +98,16 @@ def main():
         output = processFile(decrypt, shift_range, args.MESSAGE)
     else:
         output = processMessage(decrypt, shift_range, args.MESSAGE)
+    
+
+    # output to letters only:
+    if args.letters:
+        output = lettersOnly(output)
+
+    # output in all uppercase
+    if args.uppercase:
+        output = uppercaseOnly(output)
+    
 
     # loop through output list:
     i = 0
@@ -100,6 +124,30 @@ def main():
 
     # exit program with return code 0:
     sys.exit(0)
+
+
+def lettersOnly(old_list):
+    letters_list = []
+    i = 0
+    while i < len(old_list):
+        message_letters_only = ""
+        message = old_list[i]
+        for char in message:
+            if (char >= "A" and char <= "Z") or (char >= "a" and char <= "z"):
+                message_letters_only += char
+        
+        letters_list.append(message_letters_only)
+        i += 1
+    return letters_list
+
+
+def uppercaseOnly(old_list):
+    upper_list = []
+    i = 0
+    while i < len(old_list):
+        upper_list.append(old_list[i].upper())
+        i+= 1
+    return upper_list
 
 
 # accepts range (string) and converts it to integer list
