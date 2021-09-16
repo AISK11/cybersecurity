@@ -183,7 +183,9 @@ def shiftRange(shiftRange):
 
     # len(delim_list) must always equal to (len(num_list) - 1)!
     if len(delim_list) >= len(num_list):
-        print(f"[!] ERROR! Cannot determine range for '{shiftRange}'!")
+        print(
+            f"[!] ERROR! Cannot determine range for '{shiftRange}'!",
+            file=sys.stderr)
         sys.exit(2)
 
     # translate delimeters to number ranges in variable "new_num_list":
