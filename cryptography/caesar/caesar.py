@@ -149,7 +149,7 @@ def uppercaseOnly(old_list):
 
 
 # accepts range (string) and converts it to integer list
-def shiftRange(shiftRange):
+def shiftRange(shift_range):
     num_list = []
     delim_list = []
 
@@ -157,26 +157,26 @@ def shiftRange(shiftRange):
     # delimeters to "delim_list"):
     num = ""  # temp variable, that separates 0-9 from delimeters ',' and '-'
     i = 0
-    while i < len(shiftRange):
+    while i < len(shift_range):
         # check if character is number, add to "num" (string):
-        if shiftRange[i] >= "0" and shiftRange[i] <= "9":
-            num += shiftRange[i]
+        if shift_range[i] >= "0" and shift_range[i] <= "9":
+            num += shift_range[i]
             # if there is no more delimeter after number, then also add to
             # "num_list":
-            if i == len(shiftRange) - 1:
+            if i == len(shift_range) - 1:
                 if num != "":
                     num_list.append(int(num))
         # check if character is delimeter, add int(num) to list and current
         # char to "delim_list":
-        elif shiftRange[i] == "-" or shiftRange[i] == ",":
+        elif shift_range[i] == "-" or shift_range[i] == ",":
             if num != "":
                 num_list.append(int(num))
-            delim_list.append(shiftRange[i])
+            delim_list.append(shift_range[i])
             num = ""
         # Only numbers and '-', ',' are acceptable:
         else:
             print(
-                f"[!] ERROR! Unknown character detected in '{shiftRange}'!",
+                f"[!] ERROR! Unknown character detected in '{shift_range}'!",
                 file=sys.stderr)
             sys.exit(1)
         i += 1
@@ -184,7 +184,7 @@ def shiftRange(shiftRange):
     # len(delim_list) must always equal to (len(num_list) - 1)!
     if len(delim_list) >= len(num_list):
         print(
-            f"[!] ERROR! Cannot determine range for '{shiftRange}'!",
+            f"[!] ERROR! Cannot determine range for '{shift_range}'!",
             file=sys.stderr)
         sys.exit(2)
 
