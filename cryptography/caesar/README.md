@@ -8,7 +8,7 @@ Decrypts and encrypts Caesar cipher.
 1. clone repository:\
 `git clone https://github.com/AISK11/cybersecurity`
 1. navigate to directory:\
-`cd ./cybersecurity/ciphers/caesar`
+`cd ./cybersecurity/cryptography/caesar`
 1. make executable:\
 `make`
 
