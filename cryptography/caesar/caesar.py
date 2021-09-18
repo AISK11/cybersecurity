@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 ###################################################
-# Author: AISK11                                  #
+# Author: AISK11								  #
 # This script encrypts and decrypts Caesar cipher #
 ###################################################
 
@@ -30,11 +30,19 @@ def main():
         default=False,
         help="encryption - shift letters >>> by X characters")
     # shift argument:
-    parser.add_argument(
+    rotate = parser.add_mutually_exclusive_group()
+    rotate.add_argument(
         "-s",
         "--shift",
         default="3",
         help="specify X, when X is a numerical value or range used to shift letters (DEFAULT 3)")
+    # rot 13:
+    rotate.add_argument(
+        "-r",
+        "--rot",
+        action="store_true",
+        default=False,
+        help="rot13 - shift letters by 13 characters")
     # upperclase:
     parser.add_argument(
         "-u",
@@ -86,7 +94,10 @@ def main():
     args = parser.parse_args()
 
     # return list filled with numbers according to specified range:
-    shift_range = shiftRange(args.shift)
+    if not args.rot:
+        shift_range = shiftRange(args.shift)
+    else:
+        shift_range = [13]
 
     # check if encrypt flag was set:
     decrypt = 1
