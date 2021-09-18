@@ -1,5 +1,5 @@
 # hex.py
-Decrypts and encrypts Hex To String.
+Decrypts and encrypts Hex To String.\
 *Basically base16 encoder and decoder*
 
 ### INSTALLATION
