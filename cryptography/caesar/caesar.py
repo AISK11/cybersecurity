@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 ###################################################
-# Author: AISK11								  #
+# Author: AISK11                                  #
 # This script encrypts and decrypts Caesar cipher #
 ###################################################
 
